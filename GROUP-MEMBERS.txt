@@ -6,5 +6,5 @@ PARTNER 1
 - Email : duong144@umn.edu
 
 PARTNER 2:
-- Name  : (full name)
-- Email : (UMN email)
+- Name  : Quentin Smith
+- Email : smit8819@umn.edu
