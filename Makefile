@@ -15,3 +15,6 @@ cmd.o : cmd.c
 
 commando.o : commando.c commando.h
 	$(CC) -c commando.c
+
+clean :
+	rm *.o commando
