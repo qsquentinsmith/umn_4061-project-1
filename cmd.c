@@ -7,7 +7,7 @@ cmd_t *cmd_new(char *argv[]){
     // into the individual cmd's argv.
     int i;
     for(i = 0; argv[i] != NULL; i++){
-        cmd->argv[i] = strdup(argv[i]);
+        cmd->argv[i] = strdup(argv[i]); // Dynamically allocated!!
     }
     
 
@@ -24,4 +24,17 @@ cmd_t *cmd_new(char *argv[]){
     cmd->output_size = -1;
 
     return cmd;
+}
+
+void cmd_free(cmd_t *cmd) {
+    for (int i = 0; cmd->argv[i] != NULL; i++) {
+        free(cmd->argv[i]); // free all the strdup'd stuff!!
+    }
+    free(cmd);
+}
+
+void cmd_start(cmd_t *cmd) {
+    snprintf(cmd->str_status, STATUS_LEN+1, "RUN");
+    pipe(cmd->out_pipe);  // set up pipe to catch stdout
+
 }
