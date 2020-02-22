@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
 
     // Setup cmdcol_t data
     cmdcol_t cmds;
+    cmds.size = 0;
 
     // MAIN LOOP
     while (1) {
@@ -55,6 +56,12 @@ int main(int argc, char **argv) {
         else if ( strncmp(args[0], "list", NAME_MAX) == 0 ) {
             cmdcol_print(&cmds);
         }
+        else {
+            cmd_t *cmd = cmd_new(args);
+            cmdcol_add(&cmds, cmd);
+        }
+        cmdcol_update_state(&cmds, NOBLOCK);
     }
+    cmdcol_freeall(&cmds);
     return 0;
 }
