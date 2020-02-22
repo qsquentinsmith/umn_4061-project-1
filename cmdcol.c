@@ -12,7 +12,7 @@ void cmdcol_add(cmdcol_t *col, cmd_t *cmd) {
     col->cmd[col->size++] = cmd;
 }
 void cmdcol_print(cmdcol_t *col) {
-    printf("JOB  #PID      STAT   STR_STAT OUTB COMMAND");
+    printf("JOB  #PID      STAT   STR_STAT OUTB COMMAND\n");
     for (int i = 0; i < col->size; i++) {
         cmd_t *cmd = col->cmd[i];
         printf("%-4d ", i);

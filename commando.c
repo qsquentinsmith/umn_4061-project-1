@@ -2,7 +2,7 @@
 #include "commando.h"
 
 int main(int argc, char **argv) {
-    // Setup
+    // SETUP
     setvbuf(stdout, NULL, _IONBF, 0);  // Important for testing purposes
 
     // Enable echoing if it flag passed in or env var set.
@@ -14,8 +14,11 @@ int main(int argc, char **argv) {
         echo = 1;
     }
 
+    // Setup cmdcol_t data
+    cmdcol_t cmds;
+
+    // MAIN LOOP
     while (1) {
-        // Main loop
         printf("@> ");
 
         // Collect input of a line
@@ -48,6 +51,9 @@ int main(int argc, char **argv) {
         }
         else if ( strncmp(args[0], "exit", NAME_MAX) == 0 ) {
             break;
+        }
+        else if ( strncmp(args[0], "list", NAME_MAX) == 0 ) {
+            cmdcol_print(&cmds);
         }
     }
     return 0;
