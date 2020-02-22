@@ -36,5 +36,13 @@ void cmd_free(cmd_t *cmd) {
 void cmd_start(cmd_t *cmd) {
     snprintf(cmd->str_status, STATUS_LEN+1, "RUN");
     pipe(cmd->out_pipe);  // set up pipe to catch stdout
-
+    int pid = fork();
+    if (pid == 0) {
+        dup2(cmd->out_pipe[PWRITE], STDOUT_FILENO);
+        close(cmd->out_pipe[PREAD]);  // I feel like this is not right
+        execvp(cmd->argv[0], cmd->argv);
+    } else {
+        close(cmd->out_pipe[PWRITE]);  // I feel like this is not right
+        waitpid(pid, &cmd->status, WNOHANG);
+    }
 }
