@@ -101,7 +101,7 @@ char *read_all(int fd, int *nread) {
         }
     }
     buf = realloc(buf, buf_size+1);
-    buf[buf_pos+1] = '\0';
+    buf[buf_pos] = '\0';
 
     *nread = buf_pos;
     return buf;
