@@ -76,6 +76,35 @@ void cmd_update_state(cmd_t *cmd, int block) {
         }
     }
 }
-char *read_all(int fd, int *nread);
+char *read_all(int fd, int *nread) {
+    int buf_size = 1024; // 1 KB initial buffer size
+    char *buf = malloc(buf_size*sizeof(char));
+
+    int bytes_read = 0;  // Num of bytes read in after each read() call
+    int buf_pos = 0;  // Keep track of position in buffer
+    int read_size = 1024;  // Start with read size 1 KB
+    while (1) {
+        bytes_read = read(fd, buf+buf_pos, read_size);
+        buf_pos += bytes_read;
+        if (bytes_read == 0) {
+            break;
+        }
+        if (buf_pos == buf_size) {
+            buf_size *= 2;
+            read_size = buf_size / 2;
+            buf = realloc(buf, buf_size);
+
+            if (buf == NULL) {
+                printf("Error allocating memory for read_all()\n");
+                exit(1);
+            }
+        }
+    }
+    buf = realloc(buf, buf_size+1);
+    buf[buf_pos+1] = '\0';
+
+    *nread = buf_pos;
+    return buf;
+}
 void cmd_fetch_output(cmd_t *cmd);
 void cmd_print_output(cmd_t *cmd);
