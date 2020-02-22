@@ -1,4 +1,4 @@
-#include "commando.h" // Remove eventually
+#include "commando.h"
 cmd_t *cmd_new(char *argv[]){
 
     cmd_t *cmd = malloc(sizeof(cmd_t));

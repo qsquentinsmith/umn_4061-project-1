@@ -1,5 +1,5 @@
 // cmdcol.c: functions related to cmdcol_t collections of commands.
-#include "commando.h"  // REMOVE THIS LINE AFTER COMPLETE
+#include "commando.h"
 
 void cmdcol_add(cmdcol_t *col, cmd_t *cmd) {
     // Check if a cmd can be added
