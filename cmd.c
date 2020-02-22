@@ -43,6 +43,11 @@ void cmd_start(cmd_t *cmd) {
         execvp(cmd->argv[0], cmd->argv);
     } else {
         close(cmd->out_pipe[PWRITE]);  // I feel like this is not right
-        waitpid(pid, &cmd->status, WNOHANG);
+        cmd->pid = pid;  // Set child pid in the parent
     }
 }
+
+void cmd_update_state(cmd_t *cmd, int block);
+char *read_all(int fd, int *nread);
+void cmd_fetch_output(cmd_t *cmd);
+void cmd_print_output(cmd_t *cmd);
