@@ -103,8 +103,33 @@ char *read_all(int fd, int *nread) {
     buf = realloc(buf, buf_size+1);
     buf[buf_pos] = '\0';
 
+    if (buf == NULL) {
+        printf("Error allocating memory for read_all()\n");
+        exit(1);
+    }
+
     *nread = buf_pos;
     return buf;
 }
-void cmd_fetch_output(cmd_t *cmd);
-void cmd_print_output(cmd_t *cmd);
+void cmd_fetch_output(cmd_t *cmd) {
+    // Check if cmd finished
+    if (cmd->finished != 1) {
+        printf("%s[#%d] not finished yet\n", cmd->name, cmd->pid);
+        return;
+    }
+
+    // Read from pipe and set fields in cmd
+    cmd->output = read_all(cmd->out_pipe[PREAD], &cmd->output_size);
+
+    // Close pipe
+    close(cmd->out_pipe[PREAD]);
+}
+void cmd_print_output(cmd_t *cmd) {
+    // If output is a nullptr, then cmd is not ready
+    if (cmd->output == NULL) {
+        printf("%s[#%d] : output not ready\n", cmd->name, cmd->pid);
+        return;
+    }
+    // Otherwise, display the command's contents to the terminal
+    write(STDOUT_FILENO, cmd->output, cmd->output_size);
+}
