@@ -30,6 +30,7 @@ void cmd_free(cmd_t *cmd) {
     for (int i = 0; cmd->argv[i] != NULL; i++) {
         free(cmd->argv[i]); // free all the strdup'd stuff!!
     }
+    free(cmd->output);  // Free the command output
     free(cmd);
 }
 
