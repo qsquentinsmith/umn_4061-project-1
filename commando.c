@@ -56,8 +56,16 @@ int main(int argc, char **argv) {
         else if ( strncmp(args[0], "list", NAME_MAX) == 0 ) {
             cmdcol_print(&cmds);
         }
+        else if ( strncmp(args[0], "output-for", NAME_MAX) == 0 ) {
+            for (int i = 0; i < cmds.size; i++) {
+                if (cmds.cmd[i]->pid == atoi(args[1])) {
+                    cmd_print_output(cmds.cmd[i]);
+                }
+            }
+        }
         else {
             cmd_t *cmd = cmd_new(args);
+            cmd_start(cmd);
             cmdcol_add(&cmds, cmd);
         }
         cmdcol_update_state(&cmds, NOBLOCK);
