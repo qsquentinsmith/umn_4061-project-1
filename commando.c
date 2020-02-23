@@ -57,11 +57,20 @@ int main(int argc, char **argv) {
             cmdcol_print(&cmds);
         }
         else if ( strncmp(args[0], "output-for", NAME_MAX) == 0 ) {
-            for (int i = 0; i < cmds.size; i++) {
-                if (cmds.cmd[i]->pid == atoi(args[1])) {
-                    cmd_print_output(cmds.cmd[i]);
-                }
+            int jobnum = atoi(args[1]);
+            if ( jobnum > cmds.size ) {
+                continue;
             }
+            cmd_print_output(cmds.cmd[jobnum]);
+        }
+        else if ( strncmp(args[0], "output-all", NAME_MAX) == 0 ) {
+            for (int i = 0; i < cmds.size; i++) {
+                cmd_print_output(cmds.cmd[i]);
+            }
+        }
+        else if ( strncmp(args[0], "wait-for", NAME_MAX) == 0 ) {
+        }
+        else if ( strncmp(args[0], "wait-all", NAME_MAX) == 0 ) {
         }
         else {
             cmd_t *cmd = cmd_new(args);
