@@ -2,3 +2,7 @@
 commando
 *.py
 vgcore.*
+test-results/
+test_*
+.nfs*
+testy

@@ -17,7 +17,7 @@ cmd_t *cmd_new(char *argv[]){
     cmd->pid = -1;                  
     cmd->out_pipe[0] = -1;           
     cmd->out_pipe[1] = -1; 
-    cmd->finished = -1;
+    cmd->finished = 0;
     cmd->status = -1;
     snprintf(cmd->str_status, STATUS_LEN+1, "INIT");
     cmd->output = NULL;
@@ -48,6 +48,7 @@ void cmd_start(cmd_t *cmd) {
     } else {
         close(cmd->out_pipe[PWRITE]);
         cmd->pid = pid;  // Set child pid in the parent
+        
     }
 }
 
@@ -77,22 +78,25 @@ void cmd_update_state(cmd_t *cmd, int block) {
         }
     }
 }
+
+
 char *read_all(int fd, int *nread) {
     int buf_size = 1024; // 1 KB initial buffer size
     char *buf = malloc(buf_size*sizeof(char));
 
     int bytes_read = 0;  // Num of bytes read in after each read() call
     int buf_pos = 0;  // Keep track of position in buffer
-    int read_size = 1024;  // Start with read size 1 KB
-    while (1) {
+    int read_size = 128;  // Start with read size 128 (passes tests)
+
+   while (1) {
         bytes_read = read(fd, buf+buf_pos, read_size);
         buf_pos += bytes_read;
         if (bytes_read == 0) {
             break;
         }
-        if (buf_pos == buf_size) {
+
+        if (buf_pos >= buf_size) {
             buf_size *= 2;
-            read_size = buf_size / 2;
             buf = realloc(buf, buf_size);
 
             if (buf == NULL) {
@@ -101,7 +105,7 @@ char *read_all(int fd, int *nread) {
             }
         }
     }
-    buf = realloc(buf, buf_size+1);
+    buf = realloc(buf, buf_pos+1);
     buf[buf_pos] = '\0';
 
     if (buf == NULL) {
@@ -111,7 +115,9 @@ char *read_all(int fd, int *nread) {
 
     *nread = buf_pos;
     return buf;
-}
+    }
+
+
 void cmd_fetch_output(cmd_t *cmd) {
     // Check if cmd finished
     if (cmd->finished != 1) {
