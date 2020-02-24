@@ -86,7 +86,7 @@ char *read_all(int fd, int *nread) {
 
     int bytes_read = 0;  // Num of bytes read in after each read() call
     int buf_pos = 0;  // Keep track of position in buffer
-    int read_size = buf_size/2;  // Start with read size 128 (passes tests)
+    int read_size = 128;  // Start with read size 128 (passes tests)
 
    while (1) {
         bytes_read = read(fd, buf+buf_pos, read_size);
@@ -97,7 +97,6 @@ char *read_all(int fd, int *nread) {
 
         if (buf_pos >= buf_size) {
             buf_size *= 2;
-            read_size = buf_size/2;      
             buf = realloc(buf, buf_size);
 
             if (buf == NULL) {
@@ -106,7 +105,7 @@ char *read_all(int fd, int *nread) {
             }
         }
     }
-    buf = realloc(buf, buf_size+1);
+    buf = realloc(buf, buf_pos+1);
     buf[buf_pos] = '\0';
 
     if (buf == NULL) {

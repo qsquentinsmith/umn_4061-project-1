@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
         fgets(in, MAX_LINE, stdin);
         
         if (feof(stdin)){ 
-            printf("\nEnd of input");
+            printf("\nEnd of input\n");
             break;  
         }
         
@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
         }
        
         else if ( strncmp(args[0], "pause", NAME_MAX) == 0 ) {
-            pause_for(*args[1],*args[2]);   //not working correctly
+            pause_for(atol(args[1]),atoi(args[2]));   //not working correctly
         }
 
         else if ( strncmp(args[0], "output-for", NAME_MAX) == 0 ) {
