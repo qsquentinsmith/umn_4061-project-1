@@ -35,18 +35,25 @@ void cmd_free(cmd_t *cmd) {
 }
 
 void cmd_start(cmd_t *cmd) {
+    // Set status to "RUN"
     snprintf(cmd->str_status, STATUS_LEN+1, "RUN");
     pipe(cmd->out_pipe);  // set up pipe to catch stdout
+    
+
     int pid = fork();
+
     if (pid == 0) {
+        // Redirect child's output to the pipe
         dup2(cmd->out_pipe[PWRITE], STDOUT_FILENO);
-        close(cmd->out_pipe[PREAD]);
+        close(cmd->out_pipe[PREAD]);  // close off unused end of pipe
+
+        // If command is not found, error out and terminate child
         if (execvp(cmd->name, cmd->argv) == -1) {
             printf("'%s' not found\n", cmd->name);
             exit(1);
         }
     } else {
-        close(cmd->out_pipe[PWRITE]);
+        close(cmd->out_pipe[PWRITE]);  // close off unused end of pipe
         cmd->pid = pid;  // Set child pid in the parent
         
     }
@@ -62,8 +69,7 @@ void cmd_update_state(cmd_t *cmd, int block) {
     int status = waitpid(cmd->pid, &cmd->status, block);
 
     // Interpret the waitpid return value, if it is 0, there are no status
-    // updates. If the value is -1, an error occurred and commando should
-    // exit. Otherwise, a state change has occurred and we update cmd to
+    // updates. Otherwise, a state change has occurred and we update cmd to
     // indicate that it has finished.
     if (status == 0) {
         return;

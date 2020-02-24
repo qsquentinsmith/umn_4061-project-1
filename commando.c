@@ -29,6 +29,7 @@ int main(int argc, char **argv) {
         int num_args = 0;
         fgets(in, MAX_LINE, stdin);
         
+        // Interpret end of file as program end
         if (feof(stdin)){ 
             printf("\nEnd of input\n");
             break;  
@@ -40,10 +41,12 @@ int main(int argc, char **argv) {
 
         parse_into_tokens(in, args, &num_args);
 
+        // Deal with empty lines
         if (num_args == 0) {
             continue;
         }
 
+        // Print out help statements
         if ( strncmp(args[0], "help", NAME_MAX) == 0 ) {
             printf("COMMANDO COMMANDS\n");
             printf("help               : show this message\n");
@@ -59,14 +62,17 @@ int main(int argc, char **argv) {
         else if ( strncmp(args[0], "exit", NAME_MAX) == 0 ) {
             break;
         }
+        // List all jobs, running or exited
         else if ( strncmp(args[0], "list", NAME_MAX) == 0 ) {
             cmdcol_print(&cmds);
         }
        
+        // Pause the shell for #nanosecs and #secs
         else if ( strncmp(args[0], "pause", NAME_MAX) == 0 ) {
-            pause_for(atol(args[1]),atoi(args[2]));   //not working correctly
+            pause_for(atol(args[1]),atoi(args[2]));
         }
 
+        // Print output for a certain job
         else if ( strncmp(args[0], "output-for", NAME_MAX) == 0 ) {
             int jobnum = atoi(args[1]);
             if ( jobnum >= cmds.size || jobnum < 0 ) {
@@ -79,6 +85,8 @@ int main(int argc, char **argv) {
             cmd_print_output(cmds.cmd[jobnum]);
             printf("----------------------------------------\n");
         }
+
+        // Print output for all jobs!
         else if ( strncmp(args[0], "output-all", NAME_MAX) == 0 ) {
             for (int i = 0; i < cmds.size; i++) {
                 printf("@<<< Output for %s[#%d] (%d bytes):\n",
@@ -89,6 +97,8 @@ int main(int argc, char **argv) {
                 printf("----------------------------------------\n");
             }
         }
+
+        // Wait for a certain job to finish by blocking shell
         else if ( strncmp(args[0], "wait-for", NAME_MAX) == 0 ) {
             int jobnum = atoi(args[1]);
             if ( jobnum >= cmds.size || jobnum < 0 ) {
@@ -97,15 +107,20 @@ int main(int argc, char **argv) {
             cmd_update_state(cmds.cmd[jobnum], DOBLOCK);
 
         }
+
+        // Wait for all jobs to finish
         else if ( strncmp(args[0], "wait-all", NAME_MAX) == 0 ) {
             cmdcol_update_state(&cmds, DOBLOCK);
         }
+
+        // Otherwise, interpret command and attempt to execute it
         else {
             cmd_t *cmd = cmd_new(args);
             cmd_start(cmd);
             cmdcol_add(&cmds, cmd);
         }
         
+        // Check in on each job, running or finished
         cmdcol_update_state(&cmds, NOBLOCK);
     }
     
