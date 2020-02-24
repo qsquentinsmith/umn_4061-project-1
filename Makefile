@@ -1,5 +1,6 @@
 CFLAGS = -Wall -g
 CC	   = gcc $(CFLAGS)
+include test_Makefile
 
 commando : commando.o cmd.o cmdcol.o util.o
 	$(CC) -o commando commando.o cmd.o cmdcol.o util.o
