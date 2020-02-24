@@ -63,16 +63,9 @@ int main(int argc, char **argv) {
             cmdcol_print(&cmds);
         }
        
-       
-       
         else if ( strncmp(args[0], "pause", NAME_MAX) == 0 ) {
-            pause_for(args[1],args[2]);
-            
-
+            pause_for(*args[1],*args[2]);   //not working correctly
         }
-
-
-
 
         else if ( strncmp(args[0], "output-for", NAME_MAX) == 0 ) {
             int jobnum = atoi(args[1]);
