@@ -40,10 +40,13 @@ void cmd_start(cmd_t *cmd) {
     int pid = fork();
     if (pid == 0) {
         dup2(cmd->out_pipe[PWRITE], STDOUT_FILENO);
-        close(cmd->out_pipe[PREAD]);  // I feel like this is not right
-        execvp(cmd->name, cmd->argv);
+        close(cmd->out_pipe[PREAD]);
+        if (execvp(cmd->name, cmd->argv) == -1) {
+            printf("'%s' not found\n", cmd->name);
+            exit(1);
+        }
     } else {
-        close(cmd->out_pipe[PWRITE]);  // I feel like this is not right
+        close(cmd->out_pipe[PWRITE]);
         cmd->pid = pid;  // Set child pid in the parent
     }
 }
@@ -63,11 +66,8 @@ void cmd_update_state(cmd_t *cmd, int block) {
     // indicate that it has finished.
     if (status == 0) {
         return;
-    } else if (status == -1) {
-        printf("Error waiting for process %d to finish.\n", cmd->pid);
-        exit(0);
     }
-    else {
+    else if (status > 0) {
         if (WIFEXITED(cmd->status)) {
             cmd->status = WEXITSTATUS(cmd->status);
             snprintf(cmd->str_status, STATUS_LEN+1, "EXIT(%d)", cmd->status);
