@@ -69,8 +69,15 @@ int main(int argc, char **argv) {
             }
         }
         else if ( strncmp(args[0], "wait-for", NAME_MAX) == 0 ) {
+            int jobnum = atoi(args[1]);
+            if ( jobnum >= cmds.size || jobnum < 0 ) {
+                continue;
+            }
+            cmd_update_state(cmds.cmd[jobnum], DOBLOCK);
+
         }
         else if ( strncmp(args[0], "wait-all", NAME_MAX) == 0 ) {
+            cmdcol_update_state(&cmds, DOBLOCK);
         }
         else {
             cmd_t *cmd = cmd_new(args);
