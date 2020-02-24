@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
 
     // MAIN LOOP
     while (1) {
+        
         printf("@> ");
 
         // Collect input of a line
@@ -27,7 +28,12 @@ int main(int argc, char **argv) {
         char *args[ARG_MAX+1];
         int num_args = 0;
         fgets(in, MAX_LINE, stdin);
-
+        
+        if (feof(stdin)){ 
+            printf("\nEnd of input");
+            break;  
+        }
+        
         if (echo) {
             printf("%s", in);
         }
@@ -56,6 +62,18 @@ int main(int argc, char **argv) {
         else if ( strncmp(args[0], "list", NAME_MAX) == 0 ) {
             cmdcol_print(&cmds);
         }
+       
+       
+       
+        else if ( strncmp(args[0], "pause", NAME_MAX) == 0 ) {
+            pause_for(args[1],args[2]);
+            
+
+        }
+
+
+
+
         else if ( strncmp(args[0], "output-for", NAME_MAX) == 0 ) {
             int jobnum = atoi(args[1]);
             if ( jobnum >= cmds.size || jobnum < 0 ) {
@@ -94,8 +112,11 @@ int main(int argc, char **argv) {
             cmd_start(cmd);
             cmdcol_add(&cmds, cmd);
         }
+        
         cmdcol_update_state(&cmds, NOBLOCK);
     }
+    
     cmdcol_freeall(&cmds);
+    
     return 0;
 }
