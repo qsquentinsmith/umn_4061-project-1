@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
         int num_args = 0;
         fgets(in, MAX_LINE, stdin);
 
+        in[MAX_LINE] = '\0';
         if (echo) {
             printf("%s", in);
         }
