@@ -28,7 +28,6 @@ int main(int argc, char **argv) {
         int num_args = 0;
         fgets(in, MAX_LINE, stdin);
 
-        in[MAX_LINE] = '\0';
         if (echo) {
             printf("%s", in);
         }
@@ -59,7 +58,7 @@ int main(int argc, char **argv) {
         }
         else if ( strncmp(args[0], "output-for", NAME_MAX) == 0 ) {
             int jobnum = atoi(args[1]);
-            if ( jobnum > cmds.size ) {
+            if ( jobnum >= cmds.size || jobnum < 0 ) {
                 continue;
             }
             cmd_print_output(cmds.cmd[jobnum]);

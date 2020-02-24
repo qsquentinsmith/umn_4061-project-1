@@ -42,7 +42,8 @@ void cmd_start(cmd_t *cmd) {
         dup2(cmd->out_pipe[PWRITE], STDOUT_FILENO);
         close(cmd->out_pipe[PREAD]);
         if (execvp(cmd->name, cmd->argv) == -1) {
-            // remove
+            printf("'%s' not found\n", cmd->name);
+            exit(1);
         }
     } else {
         close(cmd->out_pipe[PWRITE]);
